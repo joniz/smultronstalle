@@ -1,20 +1,37 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-//const typeCheck = require('type-check').typeCheck
-var app = express()
+const businessLayer = require('./BusinessLayer.js')
+const typeCheck = require('type-check').typeCheck
 
-app.use(bodyParser.json({}))
+var app = express();
 
-app.get('/index', function(request, response){
+app.use(bodyParser.json({}));
 
-    response.send('Hello there')
-})
+app.get('/', function(request, response){
+
+    response.send('Startsidan för API')
+});
 
 
 
-app.get('/index/:id', function(request, response){
+app.post('/users', function(request, response){
 
-    response.send("Body: " + request.params.id)
-})
+    const accountToCreate = request.body
+    const expectedStructure = '{username: String}';
 
-app.listen(3000)
+    if(typeCheck(expectedStructure,accountToCreate)){
+        response.json(["Grattis, du har gjort en POST-request"])
+
+    }else{
+        response.status(400).json(["Dålig input, försök igen"])
+        return;
+    }
+
+
+    //businessLayer.getUsers(request, response);
+
+
+
+});
+
+app.listen(3000);
