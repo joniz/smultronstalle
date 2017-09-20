@@ -6,10 +6,12 @@ const typeCheck = require('type-check').typeCheck
 var app = express();
 
 app.use(bodyParser.json({}));
+businessLayer.getConnection();
+//businessLayer.createTable();
 
 app.get('/', function(request, response){
 
-    response.send('Startsidan för API')
+    businessLayer.getUsers()
 });
 
 
@@ -20,7 +22,8 @@ app.post('/users', function(request, response){
     const expectedStructure = '{username: String}';
 
     if(typeCheck(expectedStructure,accountToCreate)){
-        response.json(["Grattis, du har gjort en POST-request"])
+        response.json(["Grattis, du har gjort en POST-request " + accountToCreate.username])
+
 
     }else{
         response.status(400).json(["Dålig input, försök igen"])
@@ -33,5 +36,6 @@ app.post('/users', function(request, response){
 
 
 });
+
 
 app.listen(3000);

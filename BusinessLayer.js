@@ -1,18 +1,19 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-//const typeCheck = require('type-check').typeCheck
+const userRepository = require('./Data-access-Layer/users-repository');
+const typeCheck = require('type-check').typeCheck
 var app = express()
-
 app.use(bodyParser.json({}))
 
-exports.getUsers = function() {
-
+exports.getConnection = function() {
+    db.getConnection;
+}
+exports.createTable = function () {
+    db.createTable;
+}
+exports.getUsers = function (callback) {
+    userRepository.testDB(callback)
 }
 
 
 
-module.exports = {
-    helloWorld: function () {
-        return "Hello World";
-    }
-}
