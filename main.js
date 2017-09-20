@@ -6,32 +6,42 @@ const typeCheck = require('type-check').typeCheck
 var app = express();
 
 app.use(bodyParser.json({}));
-businessLayer.getConnection();
+//businessLayer.getConnection();
 //businessLayer.createTable();
 
 app.get('/', function(request, response){
 
-    businessLayer.getUsers()
+    businessLayer.getUsers(function(users, errors){
+        response.json(users);
+    })
+
 });
 
 
 
-app.post('/users', function(request, response){
+app.post('/users/add', function(request, response){
 
     const accountToCreate = request.body
-    const expectedStructure = '{username: String}';
+    const expectedStructure = '{username: String, password: String}';
 
-    if(typeCheck(expectedStructure,accountToCreate)){
-        response.json(["Grattis, du har gjort en POST-request " + accountToCreate.username])
-
-
-    }else{
-        response.status(400).json(["Dålig input, försök igen"])
+    if(!typeCheck(expectedStructure,accountToCreate)) {
+        response.json(response.status(400).json(['Invalid input']));
         return;
     }
+    businessLayer.addUser(accountToCreate, function (createdAccount, errors) {
+        if(errors.length == 0){
+            response.json(createdAccount);
+        }else{
+            res.status(400).json(errors);
+        }
+    })
 
 
-    //businessLayer.getUsers(request, response);
+
+
+
+
+
 
 
 
