@@ -6,8 +6,7 @@ const typeCheck = require('type-check').typeCheck
 var app = express();
 
 app.use(bodyParser.json({}));
-//businessLayer.getConnection();
-//businessLayer.createTable();
+
 
 app.get('/', function(request, response){
 

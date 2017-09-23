@@ -1,11 +1,11 @@
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
-    host     : 'smultronhosting.cxc8pzxwptru.eu-west-1.rds.amazonaws.com',
-    user     : 'NodeUser',
+    host     : 'smultronbase.cxc8pzxwptru.eu-west-1.rds.amazonaws.com',
+    user     : 'UserNode',
     password : 'Smultron1234',
-    database : 'SmultronDB',
-    port: 1433
+    database : 'SmultronNodeJS',
+    port: 3306
 })
 
 connection.connect(function(error){
@@ -19,10 +19,11 @@ connection.connect(function(error){
 
 function createTable(callback){
 
-    const query = `CREATE TABLE IF NOT EXISTS humans (
+    const query = `CREATE TABLE IF NOT EXISTS users (
  id INT(11) NOT NULL AUTO_INCREMENT,
- name VARCHAR(45) DEFAULT NULL,
- PRIMARY KEY (id)
+ username VARCHAR(45) NOT NULL,
+ password VARCHAR(45) NOT NULL,
+ PRIMARY KEY (username)
 )`
 
     connection.query(query, function(error, results, fields){
@@ -37,9 +38,9 @@ function createTable(callback){
 
 }
 
-function insertData(callback){
+exports.addUser = function (table, field, value, callback){
 
-    const query = `INSERT INTO humans SET name = "Adam"`
+    const query = `INSERT INTO users`
 
     connection.query(query, function(error, results, fields){
         if(error){

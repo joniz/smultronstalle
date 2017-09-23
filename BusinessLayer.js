@@ -13,7 +13,7 @@ exports.createTable = function () {
 }
 */
 exports.getUsers = function (callback) {
-    userRepository.testDB(callback)
+    userRepository.getUsers(callback)
 }
 exports.addUser = function(account, callback){
     userRepository.addUser(account, callback);

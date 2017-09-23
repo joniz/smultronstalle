@@ -1,6 +1,6 @@
 var db = require('./db.js');
 
-exports.testDB = function (callback) {
+exports.getUsers = function (callback) {
     const query = "SELECT * FROM users"
     db.getMany(query, {}, callback)
 
