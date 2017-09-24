@@ -26,9 +26,7 @@ exports.addUser = function (table, fields, value, callback){
     connection.query(query2,[value.username, value.password] ,function(error, results, fields){
         if(error){
             callback(results, error);
-            console.log("DATA INSERTED ERROR")
-            console.log(error)
-            console.log(query)
+
         }else{
             console.log("DATA INSERTED")
             callback(results, []);
@@ -49,6 +47,9 @@ exports.getUsers = function (query, callback){
         }
     })
 
+}
+exports.getUser = function (query, callback) {
+    connection.query()
 }
 
 //createTable();

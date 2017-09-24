@@ -8,7 +8,9 @@ var app = express();
 app.use(bodyParser.json({}));
 
 
-app.get('/', function(request, response){
+app.get('/users', function(request, response){
+
+
 
     businessLayer.getUsers(function(users, errors){
         if(errors.length == 0){
@@ -20,6 +22,14 @@ app.get('/', function(request, response){
     })
 
 });
+
+app.get('/users/:id', function (request, response) {
+    var userId = request.body.id;
+
+
+
+
+})
 
 
 
@@ -40,16 +50,12 @@ app.post('/users/add', function(request, response){
         }
     })
 
-
-
-
-
-
-
-
-
-
 });
+app.put('/users/:id'), function (request, response) {
+    const userId = request.params.id;
+    response.json('Fick en put-request');
+
+}
 
 
 app.listen(3000);

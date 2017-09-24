@@ -18,6 +18,9 @@ exports.getUsers = function (callback) {
 exports.addUser = function(account, callback){
     userRepository.addUser(account, callback);
 }
+exports.getUser = function (account, callback) {
+    userRepository.getUser(account, callback);
+}
 
 
 
