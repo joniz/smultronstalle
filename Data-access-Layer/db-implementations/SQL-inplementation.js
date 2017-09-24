@@ -17,64 +17,41 @@ connection.connect(function(error){
     }
 })
 
-function createTable(callback){
+exports.addUser = function (table, fields, value, callback){
 
-    const query = `CREATE TABLE IF NOT EXISTS users (
- id INT(11) NOT NULL AUTO_INCREMENT,
- username VARCHAR(45) NOT NULL,
- password VARCHAR(45) NOT NULL,
- PRIMARY KEY (username)
-)`
+    const query2 = "INSERT INTO " + table + "(" + fields.join() + ")" +
+        "VALUES (?,?)";
 
-    connection.query(query, function(error, results, fields){
+
+    connection.query(query2,[value.username, value.password] ,function(error, results, fields){
         if(error){
-            console.log("ERROR CREATE TABLE")
-            console.log(error)
-        }else{
-            console.log("TABLE EXISTS")
-            callback()
-        }
-    })
-
-}
-
-exports.addUser = function (table, field, value, callback){
-
-    const query = `INSERT INTO users`
-
-    connection.query(query, function(error, results, fields){
-        if(error){
+            callback(results, error);
             console.log("DATA INSERTED ERROR")
             console.log(error)
+            console.log(query)
         }else{
             console.log("DATA INSERTED")
-            callback()
+            callback(results, []);
         }
     })
 
 }
 
-function readData(){
+exports.getUsers = function (query, callback){
 
-    const query = `SELECT id, name FROM humans`
+    //const query = `SELECT id, name FROM humans`
 
     connection.query(query, function(error, results, fields){
         if(error){
-            console.log("READ DATA ERROR")
-            console.log(error)
+            callback(null, ['något gick fel']);
         }else{
-            console.log("DATA READ")
-            console.log(results)
+            callback(results, []);
         }
     })
 
 }
 
-createTable(function(){
-    insertData(function(){
-        readData()
-    })
-})
+//createTable();
 
 
 

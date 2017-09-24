@@ -11,7 +11,12 @@ app.use(bodyParser.json({}));
 app.get('/', function(request, response){
 
     businessLayer.getUsers(function(users, errors){
-        response.json(users);
+        if(errors.length == 0){
+            response.json(users);
+        }else{
+            response.json(errors)
+        }
+
     })
 
 });
@@ -29,9 +34,9 @@ app.post('/users/add', function(request, response){
     }
     businessLayer.addUser(accountToCreate, function (createdAccount, errors) {
         if(errors.length == 0){
-            response.json(createdAccount);
+            response.json("Ditt konto har skapats");
         }else{
-            res.status(400).json(errors);
+            response.status(400).json(errors);
         }
     })
 
