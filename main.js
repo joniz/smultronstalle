@@ -24,8 +24,23 @@ app.get('/users', function(request, response){
 });
 
 app.get('/users/:id', function (request, response) {
-    var userId = request.body.id;
+    var userId = request.params.id;
+    const expectedStructure = '{id: String}';
 
+/*
+    if(!typeCheck(expectedStructure, id)){
+        response.json(response.status(400).json(['Bad input']))
+        return;
+    }
+*/
+    businessLayer.getUser(userId, function (user,errors ) {
+      if(errors.length == 0){
+          response.json(user);
+      }else{
+          response.json(400).json(['This account doesnt exist']);
+      }
+
+    })
 
 
 

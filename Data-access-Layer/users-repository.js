@@ -10,6 +10,6 @@ exports.getUsers = function (callback) {
 exports.addUser = function (account, callback) {
     db.addUser('users',['username', 'password'],account, callback);
 }
-exports.getUser = function (query, callback) {
-    db.addUser(query, callback);
+exports.getUser = function (accountId, callback) {
+    db.getUser(accountId, callback);
 }

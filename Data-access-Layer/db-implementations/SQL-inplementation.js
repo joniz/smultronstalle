@@ -39,7 +39,7 @@ exports.getUsers = function (query, callback){
 
     //const query = `SELECT id, name FROM humans`
 
-    connection.query(query, function(error, results, fields){
+    connection.query(query, function(error, results){
         if(error){
             callback(null, ['något gick fel']);
         }else{
@@ -48,8 +48,17 @@ exports.getUsers = function (query, callback){
     })
 
 }
-exports.getUser = function (query, callback) {
-    connection.query()
+exports.getUser = function (accountId, callback) {
+
+    var query = "SELECT * FROM users WHERE id = ?"
+
+    connection.query(query,[accountId],function (error, results) {
+        if(error || results.length == 0){
+            callback(null, ['There is no user with this ID']);
+        }else{
+            callback(results, []);
+        }
+    })
 }
 
 //createTable();
