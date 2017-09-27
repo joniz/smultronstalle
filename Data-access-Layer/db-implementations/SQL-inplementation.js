@@ -60,6 +60,20 @@ exports.getUser = function (accountId, callback) {
         }
     })
 }
+exports.getPlaces = function (callback) {
+    var query = "SELECT * FROM posts"
+
+    connection.query(query, function (error, results) {
+        if(error){
+            callback(null, ['There was no places to get']);
+        }else{
+            callback(results, []);
+        }
+    })
+}
+
+
+
 
 //createTable();
 

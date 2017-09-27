@@ -13,3 +13,6 @@ exports.addUser = function (account, callback) {
 exports.getUser = function (accountId, callback) {
     db.getUser(accountId, callback);
 }
+exports.getPlaces = function (callback) {
+    db.getPlaces(callback);
+}

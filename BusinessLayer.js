@@ -23,6 +23,9 @@ exports.getUser = function (accountId, callback) {
 
     userRepository.getUser(accountId, callback);
 }
+exports.getPlaces = function (callback) {
+    userRepository.getPlaces(callback);
+}
 
 
 
