@@ -61,6 +61,21 @@ exports.getUser = function (accountId, callback) {
     })
 }
 
+exports.getUserComments = function (userId ,callback) {
+
+    var query = "SELECT * FROM comments WHERE id = ?"
+
+    connection.query(query, [userId] , function (error, results) {
+        if(error || results.length == 0){
+            callback(null, ['There are no comments for this user']);
+        }else{
+            callback(results, []);
+        }
+
+    })
+
+}
+
 //createTable();
 
 

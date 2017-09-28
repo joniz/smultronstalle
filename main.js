@@ -42,12 +42,19 @@ app.get('/users/:id', function (request, response) {
 
     })
 
-
-
 })
 
+app.get('/users/:id/comments', function (request, response) {
+    var userId = request.params.id;
 
-
+    businessLayer.getUserComments(userId, function (comments, errors) {
+        if(errors.length == 0){
+            response.json(comments);
+        }else{
+            response.json(400).json(['There are no comments for this user'])
+        }
+    })
+})
 app.post('/users/add', function(request, response){
 
     const accountToCreate = request.body
@@ -66,6 +73,7 @@ app.post('/users/add', function(request, response){
     })
 
 });
+
 app.put('/users/:id'), function (request, response) {
     const userId = request.params.id;
     response.json('Fick en put-request');

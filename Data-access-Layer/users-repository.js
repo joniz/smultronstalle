@@ -13,3 +13,7 @@ exports.addUser = function (account, callback) {
 exports.getUser = function (accountId, callback) {
     db.getUser(accountId, callback);
 }
+
+exports.getUserComments = function (userId, callback) {
+    db.getUserComments( userId, callback)
+}
