@@ -15,6 +15,7 @@ app.get('/users', function(request, response){
     businessLayer.getUsers(function(users, errors){
         if(errors.length == 0){
             response.json(users);
+
         }else{
             response.json(errors)
         }
@@ -79,6 +80,20 @@ app.put('/users/:id'), function (request, response) {
     response.json('Fick en put-request');
 
 }
+app.get('/posts', function (request, response) {
+
+
+    businessLayer.getPlaces(function (places, errors) {
+        if(errors.length == 0){
+            response.json(places);
+        }else{
+            response.status(400).json(errors);
+        }
+    })
+
+
+
+})
 
 
 app.listen(3000);

@@ -28,6 +28,9 @@ exports.getUserComments = function (userId, callback) {
 
     userRepository.getUserComments( userId, callback)
 }
+exports.getPlaces = function (callback) {
+    userRepository.getPlaces(callback);
+}
 
 
 
