@@ -158,6 +158,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -180,8 +182,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -267,7 +267,11 @@
       <workItem from="1506426624301" duration="230000" />
       <workItem from="1506426863427" duration="299000" />
       <workItem from="1506431048422" duration="31000" />
-      <workItem from="1506432337644" duration="13615000" />
+      <workItem from="1506432337644" duration="15608000" />
+      <workItem from="1506514421240" duration="3575000" />
+      <workItem from="1506595339096" duration="13000" />
+      <workItem from="1506595692184" duration="2537000" />
+      <workItem from="1506617443861" duration="86000" />
     </task>
     <servers />
   </component>
@@ -284,7 +288,7 @@
     <option name="totallyTimeSpent" value="101816000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="-11" width="1922" height="1092" extended-state="6" />
+    <frame x="-7" y="0" width="1922" height="1092" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18385416" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -612,6 +616,14 @@
         <state relative-caret-position="468">
           <caret line="26" column="39" lean-forward="false" selection-start-line="26" selection-start-column="39" selection-end-line="26" selection-end-column="39" />
 >>>>>>> 6d72486beb6fb6e5ec56f6d5b08a49fc79c248d6
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Data-access-Layer/db-implementations/SQL-inplementation.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="22" lean-forward="false" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
           <folding />
         </state>
       </provider>
