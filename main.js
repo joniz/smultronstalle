@@ -2,7 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const businessLayer = require('./BusinessLayer.js')
 const typeCheck = require('type-check').typeCheck
-
+const jwt = require('jsonwebtoken')
+const SECRET = "litehemligtbara"
 var app = express();
 
 app.use(bodyParser.json({}));
@@ -23,6 +24,8 @@ app.get('/users', function(request, response){
     })
 
 });
+
+
 
 app.get('/users/:id', function (request, response) {
     var userId = request.params.id;
@@ -94,6 +97,47 @@ app.get('/posts', function (request, response) {
 
 
 })
+app.post('/login', function (request, response) {
+    const accountToLogin = request.body;
+    const expectedStructure = '{username: String, password: String}';
+
+    if(!typeCheck(expectedStructure,accountToLogin)) {
+        response.json(response.status(400).json(['Invalid input']));
+        return;
+    }
+    businessLayer.logIn(accountToLogin, function (userToLogin, errors) {
+        if(errors.length == 0){
+            var id = userToLogin[0].id;
+            var payload = {userId : id};
+            jwt.sign(payload, SECRET, function(error, token){
+                if(error){
+                    response.status(401).json(errors)
+                }
+                else{
+                    response.status(200).json("Bearer " + token);
+                }
+            })
+        }
+
+    })
+})
+app.get('/posts/:id/comments', function (request, response) {
+    var postId = request.params.id;
+
+
+    businessLayer.getPostsComments(postId, function (results, errors) {
+        if(errors.length == 0){
+            response.json(results);
+        }else{
+            response.json(errors);
+        }
+    })
+})
+
+
+
+
+
 
 
 app.listen(3000);

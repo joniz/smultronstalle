@@ -31,7 +31,12 @@ exports.getUserComments = function (userId, callback) {
 exports.getPlaces = function (callback) {
     userRepository.getPlaces(callback);
 }
-
+exports.logIn = function (account, callback) {
+    userRepository.logIn(account, callback);
+}
+exports.getPostsComments = function (postId, callback) {
+    userRepository.getPostsComments(postId, callback);
+}
 
 
 

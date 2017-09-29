@@ -20,3 +20,9 @@ exports.getUserComments = function (userId, callback) {
 exports.getPlaces = function (callback) {
     db.getPlaces(callback);
 }
+exports.logIn = function (account, callback) {
+    db.logIn(account, callback);
+}
+exports.getPostsComments = function (postId, callback) {
+    db.getPostsComments(postId, callback);
+}
