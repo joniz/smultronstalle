@@ -17,12 +17,7 @@ exports.getUser = function (accountId, callback) {
 exports.getUserComments = function (userId, callback) {
     db.getUserComments(userId, callback)
 }
-exports.getPlaces = function (callback) {
-    db.getPlaces(callback);
-}
+
 exports.logIn = function (account, callback) {
     db.logIn(account, callback);
-}
-exports.getPostsComments = function (postId, callback) {
-    db.getPostsComments(postId, callback);
 }

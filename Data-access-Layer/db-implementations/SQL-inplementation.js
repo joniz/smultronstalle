@@ -19,11 +19,11 @@ connection.connect(function(error){
 
 exports.addUser = function (table, fields, value, callback){
 
-    const query2 = "INSERT INTO " + table + "(" + fields.join() + ")" +
+    const query = "INSERT INTO " + table + "(" + fields.join() + ")" +
         "VALUES (?,?)";
 
 
-    connection.query(query2,[value.username, value.password] ,function(error, results, fields){
+    connection.query(query,[value.username, value.password] ,function(error, results, fields){
         if(error){
             callback(results, error);
 
@@ -60,7 +60,7 @@ exports.getUser = function (accountId, callback) {
         }
     })
 }
-exports.getPlaces = function (callback) {
+exports.getPosts = function (callback) {
     var query = "SELECT * FROM posts"
 
     connection.query(query, function (error, results) {
@@ -116,6 +116,13 @@ exports.getPostsComments = function (postId, callback) {
             callback(results, []);
         }
     })
+}
+exports.addPost = function (post, callback) {
+
+    const query = "INSERT INTO " + table + "(" + fields.join() + ")" +
+        "VALUES (?,?)";
+
+    var query = "INSERT INTO posts"
 }
 
 

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const businessLayer = require('./BusinessLayer.js')
 const typeCheck = require('type-check').typeCheck
 const jwt = require('jsonwebtoken')
-const SECRET = "litehemligtbara"
+global.secret = "litehemligtbara";
 var app = express();
 
 app.use(bodyParser.json({}));
@@ -86,7 +86,7 @@ app.put('/users/:id'), function (request, response) {
 app.get('/posts', function (request, response) {
 
 
-    businessLayer.getPlaces(function (places, errors) {
+    businessLayer.getPosts(function (places, errors) {
         if(errors.length == 0){
             response.json(places);
         }else{
@@ -109,7 +109,7 @@ app.post('/login', function (request, response) {
         if(errors.length == 0){
             var id = userToLogin[0].id;
             var payload = {userId : id};
-            jwt.sign(payload, SECRET, function(error, token){
+            jwt.sign(payload, secret, function(error, token){
                 if(error){
                     response.status(401).json(errors)
                 }
@@ -132,7 +132,26 @@ app.get('/posts/:id/comments', function (request, response) {
             response.json(errors);
         }
     })
-})
+});
+app.post('/posts', function (request, response) {
+    var userId = request.query.userId;
+    var token = request.get("Authorization");
+
+    businessLayer.verifyToken(token, function (decoded, errors) {
+        if(errors.length == 0){
+            if(decoded.userId == userId){
+
+
+                response.json("You created a post");
+            }
+        }else{
+            response.json(errors.message);
+            return;
+        }
+    })
+
+
+});
 
 
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRepository = require('./Data-access-Layer/users-repository');
+const postRepository = require('./Data-access-Layer/post-repository');
 const typeCheck = require('type-check').typeCheck;
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
@@ -8,7 +9,7 @@ var app = express();
 app.use(bodyParser.json({}));
 
 exports.verifyToken = function (token, callback) {
-    jwt.verify(token, function(error, decoded) {
+    jwt.verify(token, secret, function(error, decoded) {
         if(error){
             callback(null, error);
         }else{
@@ -40,14 +41,14 @@ exports.getUserComments = function (userId, callback) {
 
     userRepository.getUserComments( userId, callback)
 }
-exports.getPlaces = function (callback) {
-    userRepository.getPlaces(callback);
+exports.getPosts = function (callback) {
+    postRepository.getPosts(callback);
 }
 exports.logIn = function (account, callback) {
     userRepository.logIn(account, callback);
 }
 exports.getPostsComments = function (postId, callback) {
-    userRepository.getPostsComments(postId, callback);
+    postRepository.getPostsComments(postId, callback);
 }
 
 
