@@ -1,10 +1,22 @@
-const express = require('express')
-const bodyParser = require('body-parser')
+const express = require('express');
+const bodyParser = require('body-parser');
 const userRepository = require('./Data-access-Layer/users-repository');
-const typeCheck = require('type-check').typeCheck
+const typeCheck = require('type-check').typeCheck;
 const mysql = require('mysql');
-var app = express()
-app.use(bodyParser.json({}))
+const jwt = require('jsonwebtoken');
+var app = express();
+app.use(bodyParser.json({}));
+
+exports.verifyToken = function (token, callback) {
+    jwt.verify(token, function(error, decoded) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(decoded, []);
+        }
+    });
+}
+
 
 /*exports.getConnection = function() {
     db.getConnection;
