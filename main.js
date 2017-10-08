@@ -136,13 +136,25 @@ app.get('/posts/:id/comments', function (request, response) {
 app.post('/posts', function (request, response) {
     var userId = request.query.userId;
     var token = request.get("Authorization");
+    var post = request.body;
+
+    businessLayer.checkCoordinates(post.coordinates, function (iscoordates, errors) {
+        if(iscoordates == false){
+            response.json(response.status(400).json(['Invalid coordinates']));
+
+        }
+    })
 
     businessLayer.verifyToken(token, function (decoded, errors) {
         if(errors.length == 0){
             if(decoded.userId == userId){
-
-
-                response.json("You created a post");
+                businessLayer.addPost(userId, post, function (results, errors) {
+                    if(errors.length == 0){
+                        response.json(['A post was added']);
+                    }else{
+                        response.json(errors);
+                    }
+                })
             }
         }else{
             response.json(errors.message);

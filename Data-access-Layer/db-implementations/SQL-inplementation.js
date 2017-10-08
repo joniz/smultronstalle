@@ -117,12 +117,20 @@ exports.getPostsComments = function (postId, callback) {
         }
     })
 }
-exports.addPost = function (post, callback) {
+exports.addPost = function (userId, post, callback) {
 
-    const query = "INSERT INTO " + table + "(" + fields.join() + ")" +
-        "VALUES (?,?)";
+    //const query = "INSERT INTO " + table + "(" + fields.join() + ")" +
+        //"VALUES (?,?)";
 
-    var query = "INSERT INTO posts"
+    var query = "INSERT INTO posts (description, imagelink, coordinates, userId) VALUES (?,?,?,?)";
+    connection.query(query, [post.description, post.imagelink, post.coordinates.join(), userId], function (error, results) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(results, []);
+        }
+    })
+
 }
 
 

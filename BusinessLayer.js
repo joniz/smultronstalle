@@ -5,8 +5,35 @@ const postRepository = require('./Data-access-Layer/post-repository');
 const typeCheck = require('type-check').typeCheck;
 const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
+const isCoordinates = require('is-coordinates');
 var app = express();
 app.use(bodyParser.json({}));
+
+var google = require('googleapis');
+var OAuth2 = google.auth.OAuth2;
+
+var oauth2Client = new OAuth2(
+    "149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com",
+    "zBNMzM0x1Pny3rloN53ufnxv",
+    "http://localhost:3000/users"
+);
+
+// generate a url that asks permissions for Google+ and Google Calendar scopes
+var scopes = [
+    'https://www.googleapis.com/auth/plus.me'
+];
+
+var url = oauth2Client.generateAuthUrl({
+    // 'online' (default) or 'offline' (gets refresh_token)
+    access_type: 'offline',
+
+    // If you only need one scope you can pass it as a string
+    scope: scopes,
+
+    // Optional property that passes state parameters to redirect URI
+    // state: { foo: 'bar' }
+});
+
 
 exports.verifyToken = function (token, callback) {
     jwt.verify(token, secret, function(error, decoded) {
@@ -16,6 +43,14 @@ exports.verifyToken = function (token, callback) {
             callback(decoded, []);
         }
     });
+}
+exports.checkCoordinates = function (coordArray, callback) {
+
+    if(isCoordinates(coordArray)){
+        callback(true, [])
+    }else{
+        callback(false, ['This is not a valid form for coordinates']);
+    }
 }
 
 
@@ -50,6 +85,8 @@ exports.logIn = function (account, callback) {
 exports.getPostsComments = function (postId, callback) {
     postRepository.getPostsComments(postId, callback);
 }
-
+exports.addPost = function (userId, post, callback) {
+    postRepository.addPost(userId, post, callback);
+}
 
 
