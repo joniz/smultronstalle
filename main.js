@@ -145,7 +145,7 @@ app.post('/posts', function (request, response) {
         }
     })
 
-    businessLayer.verifyToken(token, function (decoded, errors) {
+    businessLayer.verifyJWT(token, function (decoded, errors) {
         if(errors.length == 0){
             if(decoded.userId == userId){
                 businessLayer.addPost(userId, post, function (results, errors) {

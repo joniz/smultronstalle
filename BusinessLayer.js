@@ -19,23 +19,36 @@ var oauth2Client = new OAuth2(
 );
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes
-var scopes = [
-    'https://www.googleapis.com/auth/plus.me'
-];
+
 
 var url = oauth2Client.generateAuthUrl({
     // 'online' (default) or 'offline' (gets refresh_token)
     access_type: 'offline',
 
     // If you only need one scope you can pass it as a string
-    scope: scopes,
+    scope: 'https://www.googleapis.com/auth/plus.me',
 
     // Optional property that passes state parameters to redirect URI
     // state: { foo: 'bar' }
 });
 
+exports.getTokenOAuth2 = function (code, callback) {
 
-exports.verifyToken = function (token, callback) {
+
+
+
+    oauth2Client.getToken(code, function (err, tokens) {
+        // Now tokens contains an access_token and an optional refresh_token. Save them.
+        if (!err) {
+            oauth2Client.setCredentials(tokens);
+        }
+    });
+
+}
+
+
+
+exports.verifyJWT = function (token, callback) {
     jwt.verify(token, secret, function(error, decoded) {
         if(error){
             callback(null, error);
