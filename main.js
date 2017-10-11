@@ -97,7 +97,7 @@ app.get('/users/:id/comments', function (request, response) {
     })
 })
 app.post('/users/add', function(request, response) {
-    var authCode = request.get("Authorization");
+    var authCode = request.body.grant_type;
     const accountToCreate = request.body;
     const expectedStructure = '{username: String, password: String}';
     const expectedStructureGoogle = '{sub: Number}';

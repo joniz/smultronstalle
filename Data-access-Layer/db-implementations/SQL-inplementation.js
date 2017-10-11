@@ -17,12 +17,11 @@ connection.connect(function(error){
     }
 })
 
-exports.addUser = function (table, fields, value, callback){
-
-    const query = "INSERT INTO " + table + "(" + fields.join() + ")" +
-        "VALUES (?,?)";
+exports.addUser = function (userId, post, callback){
 
 
+
+    const query = "INSERT INTO users (username, password, sub) VALUES (?,?,?)";
 
     connection.query(query,[account.username, account.password, account.sub],function(error, results){
 

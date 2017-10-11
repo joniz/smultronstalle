@@ -32,7 +32,7 @@ var url = oauth2Client.generateAuthUrl({
     // Optional property that passes state parameters to redirect URI
     // state: { foo: 'bar' }
 });
-
+console.log(url);
 exports.getAccessToken = function (code, callback) {
 
     oauth2Client.getToken(code, function (err, tokens) {
