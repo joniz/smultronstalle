@@ -12,6 +12,7 @@ app.use(bodyParser.json({}));
 var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
 
+
 var oauth2Client = new OAuth2(
     "149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com",
     "zBNMzM0x1Pny3rloN53ufnxv",
@@ -31,6 +32,8 @@ var url = oauth2Client.generateAuthUrl({
     // Optional property that passes state parameters to redirect URI
     // state: { foo: 'bar' }
 });
+
+
 
 exports.getTokenOAuth2 = function (code, callback) {
 
@@ -66,7 +69,6 @@ exports.checkCoordinates = function (coordArray, callback) {
     }
 }
 
-
 /*exports.getConnection = function() {
     db.getConnection;
 }
@@ -101,5 +103,3 @@ exports.getPostsComments = function (postId, callback) {
 exports.addPost = function (userId, post, callback) {
     postRepository.addPost(userId, post, callback);
 }
-
-

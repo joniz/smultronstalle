@@ -3,12 +3,49 @@ const bodyParser = require('body-parser')
 const businessLayer = require('./BusinessLayer.js')
 const typeCheck = require('type-check').typeCheck
 const jwt = require('jsonwebtoken')
+
 global.secret = "litehemligtbara";
 var app = express();
 
+var multer = require('multer');
+var multerS3 = require('multer-s3')
+var AWS = require('aws-sdk');
+var fs = require('fs');
+S3FS = require('s3fs');
+
+var credentials = new AWS.Credentials(
+    "AKIAJ6QKD3DZ4V7R5JIA",
+    "M3RLj0SFZQevLxKnQnicDtLvws6dY8Brv5djBZ54"
+)
+
+var s3 = new AWS.S3({
+    credentials: credentials,
+    region: "eu-west-1"
+
+
+})
+global.upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'linusbucket',
+        metadata: function (req, file, cb) {
+            cb(null, {fieldName: file.fieldname});
+        },
+        key: function (req, file, cb) {
+            cb(null, Date.now().toString())
+        }
+    })
+})
+
 app.use(bodyParser.json({}));
 
+app.post('/upload', upload.single('avatar'), function (req, res, next) {
 
+
+    console.log(req.file.location)
+    res.send('Successfully uploaded')
+
+})
 app.get('/users', function(request, response){
 
 
