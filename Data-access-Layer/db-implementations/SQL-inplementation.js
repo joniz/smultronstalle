@@ -54,9 +54,12 @@ exports.getUser = function (accountId, callback) {
     var query = "SELECT * FROM users WHERE id = ?"
 
     connection.query(query,[accountId],function (error, results) {
-        if(error || results.length == 0){
-            callback(null, ['There is no user with this ID']);
-        }else{
+        if(error){
+            callback(null, error);
+        }else if(results.length == 0){
+            callback(null, ['There is no user with this id']);
+        }
+        else{
             callback(results, []);
         }
     })
@@ -92,9 +95,9 @@ exports.getUserComments = function (userId ,callback) {
 }
 
 exports.logIn = function (account, callback) {
-    var query = "SELECT id FROM users WHERE username = ? AND password = ?"
+    var query = "SELECT id FROM users WHERE (username = ? AND password = ?) OR sub = ?"
 
-    connection.query(query, [account.username, account.password], function (error, results) {
+    connection.query(query, [account.username, account.password, account.sub], function (error, results) {
         if(error){
             callback(null, ['Something went wrong']);
         }else if(results.length == 0){
@@ -103,7 +106,7 @@ exports.logIn = function (account, callback) {
         }else{
             callback(results, []);
         }
-    })
+     })
 }
 exports.getPostsComments = function (postId, callback) {
     var query = "SELECT commentText, time, id FROM comments WHERE placeId = ?"

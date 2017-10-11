@@ -1,14 +1,18 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const businessLayer = require('./BusinessLayer.js')
-const typeCheck = require('type-check').typeCheck
-const jwt = require('jsonwebtoken')
+const express = require('express');
+const bodyParser = require('body-parser');
+const businessLayer = require('./BusinessLayer.js');
+const typeCheck = require('type-check').typeCheck;
+const jwt = require('jsonwebtoken');
+const multiparty = require('connect-multiparty');
+
 
 global.secret = "litehemligtbara";
 var app = express();
+app.use(bodyParser.json({}));
+app.use(bodyParser.urlencoded({extended : true}));
 
 var multer = require('multer');
-var multerS3 = require('multer-s3')
+var multerS3 = require('multer-s3');
 var AWS = require('aws-sdk');
 var fs = require('fs');
 S3FS = require('s3fs');
@@ -37,11 +41,15 @@ global.upload = multer({
     })
 })
 
-app.use(bodyParser.json({}));
+
 
 app.post('/upload', upload.single('avatar'), function (req, res, next) {
-
-
+    token = req.get("Authorization");
+    businessLayer.verifyJWT(token, function (decoded, errors) {
+        if(errors.length == 0){
+            
+        }
+    })
     console.log(req.file.location)
     res.send('Successfully uploaded')
 
@@ -66,19 +74,11 @@ app.get('/users', function(request, response){
 
 app.get('/users/:id', function (request, response) {
     var userId = request.params.id;
-    const expectedStructure = '{id: String}';
-
-/*
-    if(!typeCheck(expectedStructure, id)){
-        response.json(response.status(400).json(['Bad input']))
-        return;
-    }
-*/
     businessLayer.getUser(userId, function (user,errors ) {
       if(errors.length == 0){
           response.json(user);
       }else{
-          response.json(400).json(['This account doesnt exist']);
+          response.json(400).json(errors);
       }
 
     })
@@ -97,16 +97,16 @@ app.get('/users/:id/comments', function (request, response) {
     })
 })
 app.post('/users/add', function(request, response) {
-    var authCode = request.body.grant_type;
+    var grant_type = request.body.grant_type;
     const accountToCreate = request.body;
-    const expectedStructure = '{username: String, password: String}';
-    const expectedStructureGoogle = '{sub: Number}';
 
 
-    if(authCode != null) {
-        businessLayer.getAccessToken(authCode, function (subPart, errors) {
+
+    if(grant_type == "code") {
+        businessLayer.getAccessToken(accountToCreate.code, function (subPart, errors) {
             if (errors.length == 0) {
-                businessLayer.logIn(subPart, function (account, errors) {
+                accountToCreate.sub = subPart;
+                businessLayer.logIn(accountToCreate, function (account, errors) {
                     if (account) {
                         response.json(['This user already exists']);
                         return;
@@ -119,13 +119,11 @@ app.post('/users/add', function(request, response) {
                             }
                         });
                     } else {
-                       response.json(errors);
+                       response.status(400).json(errors);
                     }
-
-
                 })
             }else{
-                response.json(errors.message);
+                response.status(400).json(errors.message);
             }
         })
     }else{
@@ -142,28 +140,13 @@ app.post('/users/add', function(request, response) {
                 });
 
             }else{
-                response.json(errors);
+                response.status(400).json(errors);
             }
         })
     }
 
-
-        /* businessLayer.addUser(accountToCreate, function (createdAccount, errors) {
-            if(errors.length == 0){
-                response.json("Ditt konto har skapats");
-            }else{
-                response.status(400).json(errors);
-            }
-        })
-    */
-
 })
 
-app.put('/users/:id'), function (request, response) {
-    const userId = request.params.id;
-    response.json('Fick en put-request');
-
-}
 app.get('/posts', function (request, response) {
 
 
@@ -179,6 +162,7 @@ app.get('/posts', function (request, response) {
 
 })
 app.post('/login', function (request, response) {
+    const grant_type = request.body.grant_type;
     const accountToLogin = request.body;
     const expectedStructure = '{username: String, password: String}';
 
@@ -187,7 +171,7 @@ app.post('/login', function (request, response) {
         return;
     }
     */
-    if(request.body.code == null) {
+    if (grant_type == "password") {
         businessLayer.logIn(accountToLogin, function (userToLogin, errors) {
             if (errors.length == 0) {
                 var id = userToLogin[0].id;
@@ -205,11 +189,12 @@ app.post('/login', function (request, response) {
             }
 
         })
-    }else{
+    }else if(grant_type == "code"){
         var authCode = request.body.code;
         businessLayer.getAccessToken(authCode, function (tokenSub, errors) {
             if(errors.length == 0) {
-                businessLayer.logIn([tokenSub], function (userToLogin, errors) {
+                accountToLogin.sub = tokenSub;
+                businessLayer.logIn(accountToLogin, function (userToLogin, errors) {
                     if(errors.length == 0){
                         var id = userToLogin[0].id;
                         var payload = {userId : id}
@@ -230,6 +215,8 @@ app.post('/login', function (request, response) {
             }
 
         });
+    }else{
+        response.status(400).json(['Wrong grant_type']);
     }
 })
 app.get('/posts/:id/comments', function (request, response) {
@@ -244,16 +231,17 @@ app.get('/posts/:id/comments', function (request, response) {
         }
     })
 });
-app.post('/posts', function (request, response) {
+app.post('/posts/add', function (request, response) {
     var userId = request.body.userId
     var token = request.get("Authorization");
     var post = request.body;
 
-    businessLayer.checkCoordinates(post.coordinates, function (iscoordates, errors) {
-        if(iscoordates == false){
-            response.json(response.status(400).json(['Invalid coordinates']));
 
+    businessLayer.checkCoordinates(post.coordinates, function (iscoordinates, errors) {
+        if(iscoordinates == false) {
+            response.json(response.status(400).json(errors));
         }
+
     })
 
     businessLayer.verifyJWT(token, function (decoded, errors) {
@@ -261,7 +249,7 @@ app.post('/posts', function (request, response) {
             if(decoded.userId == userId){
                 businessLayer.addPost(userId, post, function (results, errors) {
                     if(errors.length == 0){
-                        return response.status(200).json(['Post was added']);
+                        return response.status(200);
 
                     }else{
                         response.json(errors);
@@ -276,15 +264,11 @@ app.post('/posts', function (request, response) {
             return;
         }
     })
-    //response.status(401).json(['You are not authorized']);
 
 });
 app.get('/login/google', function (request, response) {
     var authCode = request.query.code;
-
-
     response.json(authCode);
-
 })
 
 
