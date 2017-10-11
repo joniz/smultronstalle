@@ -101,10 +101,13 @@ app.post('/users/add', function(request, response){
     const accountToCreate = request.body
     const expectedStructure = '{username: String, password: String}';
 
-    if(!typeCheck(expectedStructure,accountToCreate)) {
+
+
+    /*if(!typeCheck(expectedStructure,accountToCreate)) {
         response.json(response.status(400).json(['Invalid input']));
         return;
     }
+    */
     businessLayer.addUser(accountToCreate, function (createdAccount, errors) {
         if(errors.length == 0){
             response.json("Ditt konto har skapats");
@@ -138,25 +141,55 @@ app.post('/login', function (request, response) {
     const accountToLogin = request.body;
     const expectedStructure = '{username: String, password: String}';
 
-    if(!typeCheck(expectedStructure,accountToLogin)) {
+    /*if(!typeCheck(expectedStructure,accountToLogin)) {
         response.json(response.status(400).json(['Invalid input']));
         return;
     }
-    businessLayer.logIn(accountToLogin, function (userToLogin, errors) {
-        if(errors.length == 0){
-            var id = userToLogin[0].id;
-            var payload = {userId : id};
-            jwt.sign(payload, secret, function(error, token){
-                if(error){
-                    response.status(401).json(errors)
-                }
-                else{
-                    response.status(200).json("Bearer " + token);
-                }
-            })
-        }
+    */
+    if(request.body.code == null) {
+        businessLayer.logIn(accountToLogin, function (userToLogin, errors) {
+            if (errors.length == 0) {
+                var id = userToLogin[0].id;
+                var payload = {userId: id};
+                jwt.sign(payload, secret, function (errors, token) {
+                    if (errors) {
+                        response.status(401).json(errors)
+                    }
+                    else {
+                        response.status(200).json("Bearer " + token);
+                    }
+                })
+            }else{
+                response.json(errors);
+            }
 
-    })
+        })
+    }else{
+        var authCode = request.body.code;
+        businessLayer.getAccessToken(authCode, function (tokenSub, errors) {
+            if(errors.length == 0) {
+                businessLayer.logIn([tokenSub], function (userToLogin, errors) {
+                    if(errors.length == 0){
+                        var id = userToLogin[0].id;
+                        var payload = {userId : id}
+                        jwt.sign(payload, secret, function (errors, token) {
+                            if(errors){
+                                response.status(401).json(errors);
+                            }else{
+                                response.status(200).json("Bearer " + token);
+                            }
+                        })
+                    }
+                })
+
+            }else{
+                response.json(errors);
+
+
+            }
+
+        });
+    }
 })
 app.get('/posts/:id/comments', function (request, response) {
     var postId = request.params.id;
@@ -171,7 +204,7 @@ app.get('/posts/:id/comments', function (request, response) {
     })
 });
 app.post('/posts', function (request, response) {
-    var userId = request.query.userId;
+    var userId = request.body.userId
     var token = request.get("Authorization");
     var post = request.body;
 
@@ -198,10 +231,35 @@ app.post('/posts', function (request, response) {
             return;
         }
     })
-
+    response.status(401).json(['You are not authorized']);
 
 });
+app.get('/login/google', function (request, response) {
+    var authCode = request.query.code;
 
+
+    response.json(authCode);
+    /*businessLayer.getAccessToken(codeAuth, function (subPartOftoken, errors) {
+        if(errors.length == 0) {
+            var id = subPartOftoken;
+            var payload = {userId: id};
+            jwt.sign(payload, secret, function (error, token) {
+                if(error){
+                    response.json("Something went wrong");
+                }else{
+                    response.json("Bearer " + token);
+                }
+            })
+
+        }else{
+
+            response.json(errors);
+
+
+        }
+    });
+    */
+})
 
 
 

@@ -16,7 +16,7 @@ var OAuth2 = google.auth.OAuth2;
 var oauth2Client = new OAuth2(
     "149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com",
     "zBNMzM0x1Pny3rloN53ufnxv",
-    "http://localhost:3000/users"
+    "http://localhost:3000/login/google"
 );
 
 // generate a url that asks permissions for Google+ and Google Calendar scopes
@@ -33,20 +33,23 @@ var url = oauth2Client.generateAuthUrl({
     // state: { foo: 'bar' }
 });
 
-
-
-exports.getTokenOAuth2 = function (code, callback) {
-
-
-
+exports.getAccessToken = function (code, callback) {
 
     oauth2Client.getToken(code, function (err, tokens) {
         // Now tokens contains an access_token and an optional refresh_token. Save them.
         if (!err) {
-            oauth2Client.setCredentials(tokens);
+
+            console.log(tokens);
+            var token = tokens.id_token;
+            var decodedToken = jwt.decode(token, {complete: true});
+            var subPart = decodedToken.payload.sub;
+            console.log(subPart);
+            //exports.logIn(subPart, callback);
+            callback(subPart, []);
+        }else{
+            callback(null, err);
         }
     });
-
 }
 
 
@@ -68,7 +71,6 @@ exports.checkCoordinates = function (coordArray, callback) {
         callback(false, ['This is not a valid form for coordinates']);
     }
 }
-
 /*exports.getConnection = function() {
     db.getConnection;
 }
