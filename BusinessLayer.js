@@ -37,12 +37,12 @@ exports.getAccessToken = function (code, callback) {
     oauth2Client.getToken(code, function (err, tokens) {
         // Now tokens contains an access_token and an optional refresh_token. Save them.
         if (!err) {
-            //oauth2Client.setCredentials(tokens);
-            console.log(tokens);
+
             var token = tokens.id_token;
+
             var decodedToken = jwt.decode(token, {complete: true});
             var subPart = decodedToken.payload.sub;
-            console.log(subPart);
+
             //exports.logIn(subPart, callback);
             callback(subPart, []);
         }else{

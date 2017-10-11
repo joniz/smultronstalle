@@ -22,9 +22,9 @@ exports.addUser = function (account, callback){
     const query = "INSERT INTO users (username, password, sub) VALUES (?,?,?)";
 
 
-    connection.query(query,[account.username, account.password, account.sub],function(error, results, fields){
+    connection.query(query,[account.username, account.password, account.sub],function(error, results){
         if(error){
-            callback(results, error);
+            callback(null, error);
 
         }else{
             console.log("DATA INSERTED")

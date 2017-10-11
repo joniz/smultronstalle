@@ -59,27 +59,68 @@ app.get('/users/:id/comments', function (request, response) {
         }
     })
 })
-app.post('/users/add', function(request, response){
-
-    const accountToCreate = request.body
+app.post('/users/add', function(request, response) {
+    var authCode = request.get("Authorization");
+    const accountToCreate = request.body;
     const expectedStructure = '{username: String, password: String}';
+    const expectedStructureGoogle = '{sub: Number}';
 
 
+    if(authCode != null) {
+        businessLayer.getAccessToken(authCode, function (subPart, errors) {
+            if (errors.length == 0) {
+                businessLayer.logIn(subPart, function (account, errors) {
+                    if (account) {
+                        response.json(['This user already exists']);
+                        return;
+                    } else if (errors[0] == "This user does not exist") {
+                        businessLayer.addUser(accountToCreate, function (result, errors) {
+                            if(errors.length == 0){
+                                response.status(200).json(['A user was added']);
+                            }else{
+                                response.status(400).json(errors);
+                            }
+                        });
+                    } else {
+                       response.json(errors);
+                    }
 
-    /*if(!typeCheck(expectedStructure,accountToCreate)) {
-        response.json(response.status(400).json(['Invalid input']));
-        return;
+
+                })
+            }else{
+                response.json(errors.message);
+            }
+        })
+    }else{
+        businessLayer.logIn(accountToCreate, function (account, errors) {
+            if(account){
+                response.json(['This user already exist']);
+            }else if(errors[0] == "This user does not exist"){
+                businessLayer.addUser(accountToCreate, function (result, errors) {
+                    if(errors.length == 0){
+                        response.status(200).json(['A user was added']);
+                    }else{
+                        response.status(400).json(errors);
+                    }
+                });
+
+            }else{
+                response.json(errors);
+            }
+        })
     }
-    */
-    businessLayer.addUser(accountToCreate, function (createdAccount, errors) {
-        if(errors.length == 0){
-            response.json("Ditt konto har skapats");
-        }else{
-            response.status(400).json(errors);
-        }
-    })
 
-});
+
+        /* businessLayer.addUser(accountToCreate, function (createdAccount, errors) {
+            if(errors.length == 0){
+                response.json("Ditt konto har skapats");
+            }else{
+                response.status(400).json(errors);
+            }
+        })
+    */
+
+})
 
 app.put('/users/:id'), function (request, response) {
     const userId = request.params.id;
@@ -183,18 +224,22 @@ app.post('/posts', function (request, response) {
             if(decoded.userId == userId){
                 businessLayer.addPost(userId, post, function (results, errors) {
                     if(errors.length == 0){
-                        response.json(['A post was added']);
+                        return response.status(200).json(['Post was added']);
+
                     }else{
                         response.json(errors);
                     }
                 })
+            }else{
+                response.status(401).json(['Unauthorized']);
             }
+
         }else{
             response.json(errors.message);
             return;
         }
     })
-    response.status(401).json(['You are not authorized']);
+    //response.status(401).json(['You are not authorized']);
 
 });
 app.get('/login/google', function (request, response) {
@@ -202,26 +247,7 @@ app.get('/login/google', function (request, response) {
 
 
     response.json(authCode);
-    /*businessLayer.getAccessToken(codeAuth, function (subPartOftoken, errors) {
-        if(errors.length == 0) {
-            var id = subPartOftoken;
-            var payload = {userId: id};
-            jwt.sign(payload, secret, function (error, token) {
-                if(error){
-                    response.json("Something went wrong");
-                }else{
-                    response.json("Bearer " + token);
-                }
-            })
 
-        }else{
-
-            response.json(errors);
-
-
-        }
-    });
-    */
 })
 
 
