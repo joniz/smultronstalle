@@ -17,12 +17,15 @@ connection.connect(function(error){
     }
 })
 
-exports.addUser = function (account, callback){
+exports.addUser = function (table, fields, value, callback){
 
-    const query = "INSERT INTO users (username, password, sub) VALUES (?,?,?)";
+    const query = "INSERT INTO " + table + "(" + fields.join() + ")" +
+        "VALUES (?,?)";
+
 
 
     connection.query(query,[account.username, account.password, account.sub],function(error, results){
+
         if(error){
             callback(null, error);
 
@@ -90,14 +93,13 @@ exports.getUserComments = function (userId ,callback) {
 }
 
 exports.logIn = function (account, callback) {
+    var query = "SELECT id FROM users WHERE username = ? AND password = ?"
 
-    var query = "SELECT id FROM users WHERE (username = ? AND password = ?) OR (sub = ?)"
-
-    connection.query(query, [account.username, account.password, account[0]], function (error, results) {
+    connection.query(query, [account.username, account.password], function (error, results) {
         if(error){
-            callback(null, ['Something went wrong'] + error.message);
+            callback(null, ['Something went wrong']);
         }else if(results.length == 0){
-            callback(null, ['This user does not exist']);
+            callback(null, ['Wrong input']);
 
         }else{
             callback(results, []);

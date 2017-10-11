@@ -8,7 +8,7 @@ exports.getUsers = function (callback) {
 
 
 exports.addUser = function (account, callback) {
-    db.addUser(account, callback);
+    db.addUser('users',['username', 'password'],account, callback);
 }
 exports.getUser = function (accountId, callback) {
     db.getUser(accountId, callback);
