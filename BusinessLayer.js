@@ -15,7 +15,7 @@ const bucketAddr = "https://s3-eu-west-1.amazonaws.com/nodejssmultronstalle/"
 var oauth2Client = new OAuth2(
     "149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com",
     "zBNMzM0x1Pny3rloN53ufnxv",
-    "http://localhost:3000/login/google"
+    "https://s3-eu-west-1.amazonaws.com/nodejssmultronstalle/"
 );
 
 var fs = require('fs'),
@@ -35,10 +35,11 @@ exports.uploadPicture = function (picture, postId, callback) {
                 callback (null, errors);
             }else{
                 exports.addImageToPost(postId, bucketAddr + picture.originalname, function (results, errors) {
-                    if(errors){
-                        callback(null, errors)
-                    }else{
+                    if(errors.length == 0){
                         callback(bucketAddr + picture.originalname, []);
+
+                    }else{
+                        callback(null, errors)
                     }
                 });
 
