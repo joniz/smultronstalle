@@ -3,7 +3,12 @@ const bodyParser = require('body-parser');
 const businessLayer = require('./BusinessLayer.js');
 const typeCheck = require('type-check').typeCheck;
 const jwt = require('jsonwebtoken');
-const multiparty = require('connect-multiparty');
+//const multiparty = require('connect-multiparty');
+var multer = require('multer');
+var multerS3 = require('multer-s3');
+var AWS = require('aws-sdk');
+var fs = require('fs');
+S3FS = require('s3fs');
 
 
 global.secret = "litehemligtbara";
@@ -11,15 +16,7 @@ var app = express();
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({extended : true}));
 
-var multer = require('multer');
-var multerS3 = require('multer-s3');
-var AWS = require('aws-sdk');
-var fs = require('fs');
-S3FS = require('s3fs');
 
-global.secret = "litehemligtbara";
-var app = express();
-app.use(bodyParser.json({}));
 
 
 var credentials = new AWS.Credentials(
