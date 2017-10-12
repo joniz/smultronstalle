@@ -11,6 +11,9 @@ var multerS3 = require('multer-s3');
 var AWS = require('aws-sdk');
 var fs = require('fs');
 S3FS = require('s3fs');
+//var argv = require('minimist')(process.argv.slice(2));
+//var swagger = require("swagger-node-express");
+const PORT = process.env.PORT;
 
 
 global.secret = "litehemligtbara";
@@ -18,34 +21,6 @@ var app = express();
 //app.use(multiparty)
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({extended : true}));
-
-
-
-
-/*var credentials = new AWS.Credentials(
-    "AKIAJ6QKD3DZ4V7R5JIA",
-    "M3RLj0SFZQevLxKnQnicDtLvws6dY8Brv5djBZ54"
-)
-
-var s3 = new AWS.S3({
-    credentials: credentials,
-    region: "eu-west-1"
-
-
-})
-global.upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: 'linusbucket',
-        metadata: function (req, file, cb) {
-            cb(null, {fieldName: file.fieldname});
-        },
-        key: function (req, file, cb) {
-            cb(null, Date.now().toString())
-        }
-    })
-})
-*/
 
 
 app.post('/uploadImage', upload.any(), function (request, response) {
@@ -102,7 +77,7 @@ app.get('/users/:id/comments', function (request, response) {
         }
     })
 })
-app.post('/users/add', function(request, response) {
+app.post('/users', function(request, response) {
     var grant_type = request.body.grant_type;
     const accountToCreate = request.body;
 
@@ -237,7 +212,7 @@ app.get('/posts/:id/comments', function (request, response) {
         }
     })
 });
-app.post('/posts/add', function (request, response) {
+app.post('/posts', function (request, response) {
     var userId = request.body.userId
     var token = request.get("Authorization");
     var post = request.body;
@@ -273,10 +248,19 @@ app.post('/posts/add', function (request, response) {
 
 });
 app.get('/login/google', function (request, response) {
-    var authCode = request.query.code;
+    var authCode = request.params.id;
     response.json(authCode);
 })
-app.delete('/users/delete/:id')
+app.delete('/users/:id', function (request, response) {
+    var userId = request.params.id;
+    businessLayer.deleteUser(userId, function (results, errors) {
+        if(errors){
+            response.status(400).json(errors);
+        }else{
+            response.status(200).json([''])
+        }
+    })
+})
 
 
 
