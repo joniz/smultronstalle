@@ -17,7 +17,7 @@ connection.connect(function(error){
     }
 })
 
-exports.addUser = function (userId, post, callback){
+exports.addUser = function (account, callback){
 
 
 
@@ -63,9 +63,9 @@ exports.getUser = function (accountId, callback) {
             callback(results, []);
         }
     })
-}
+};
 exports.getPosts = function (callback) {
-    var query = "SELECT * FROM posts"
+    var query = "SELECT * FROM posts";
 
     connection.query(query, function (error, results) {
         if(error){
@@ -74,14 +74,14 @@ exports.getPosts = function (callback) {
             callback(results, []);
         }
     })
-}
+};
 
 
 
 
 exports.getUserComments = function (userId ,callback) {
 
-    var query = "SELECT * FROM comments WHERE id = ?"
+    var query = "SELECT * FROM comments WHERE userId = ?"
 
     connection.query(query, [userId] , function (error, results) {
         if(error || results.length == 0){
@@ -148,12 +148,37 @@ exports.addImageToPost = function (postId, imageLink, callback) {
     })
 }
 exports.deleteUser = function (userId, callback) {
-    var query = "DELETE FROM users WHERE id = ?"
+    var query = "DELETE FROM users WHERE id = ?";
     connection.query(query, [userId], function (error, results) {
         if(error){
             callback(null,  error);
         }else{
             callback(results, []);
+        }
+    })
+}
+exports.deletePost = function (postId, callback) {
+    var query = "DELETE FROM posts WHERE id = ?";
+
+    connection.query(query, [postId], function (error, results) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(results, []);
+        }
+    })
+
+}
+exports.checkIfUserExist = function (account, callback) {
+    var query = "SELECT id FROM users WHERE (username = ? AND password = ?) OR sub = ?";
+
+    connection.query(query, [account.username, account.password, account.sub], function (error, results) {
+        if(error){
+            callback(null, error);
+        }else if(results.length != 0){
+            callback(true, []);
+        }else{
+            callback(false, []);
         }
     })
 }

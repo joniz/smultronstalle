@@ -12,3 +12,6 @@ exports.addPost = function (userId, post, callback) {
 exports.addImageToPost = function (postId, imageLink, callback) {
     db.addImageToPost(postId, imageLink, callback);
 }
+exports.deletePost = function (postId, callback) {
+    db.deletePost(postId, callback);
+}

@@ -136,3 +136,9 @@ exports.addImageToPost = function (postId, imageLink, callback) {
 exports.deleteUser = function (userId, callback) {
     userRepository.deleteUser(userId, callback);
 }
+exports.deletePost = function (postId, callback) {
+    postRepository.deletePost(postId, callback);
+}
+exports.checkIfUserExists = function (account, callback) {
+    userRepository.checkIfUserExists(account, callback)
+}

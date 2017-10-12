@@ -51,15 +51,13 @@ app.get('/users', function(request, response){
 
 });
 
-
-
 app.get('/users/:id', function (request, response) {
     var userId = request.params.id;
     businessLayer.getUser(userId, function (user,errors ) {
-      if(errors.length == 0){
-          response.json(user);
+      if(errors){
+          response.status(400).json(errors);
       }else{
-          response.json(400).json(errors);
+          response.json(200).json(user);
       }
 
     })
@@ -73,7 +71,7 @@ app.get('/users/:id/comments', function (request, response) {
         if(errors.length == 0){
             response.json(comments);
         }else{
-            response.json(400).json(['There are no comments for this user'])
+            response.json(400).json()
         }
     })
 })
@@ -87,11 +85,11 @@ app.post('/users', function(request, response) {
         businessLayer.getAccessToken(accountToCreate.code, function (subPart, errors) {
             if (errors.length == 0) {
                 accountToCreate.sub = subPart;
-                businessLayer.logIn(accountToCreate, function (account, errors) {
+                businessLayer.checkIfUserExists(accountToCreate, function (account, errors) {
                     if (account) {
-                        response.json(['This user already exists']);
+                        response.status(400).json();
                         return;
-                    } else if (errors[0] == "This user does not exist") {
+                    } else if (account == false) {
                         businessLayer.addUser(accountToCreate, function (result, errors) {
                             if(errors.length == 0){
                                 response.status(200).json(['A user was added']);
@@ -107,25 +105,23 @@ app.post('/users', function(request, response) {
                 response.status(400).json(errors.message);
             }
         })
-    }else{
-        businessLayer.logIn(accountToCreate, function (account, errors) {
-            if(account){
-                response.json(['This user already exist']);
-            }else if(errors[0] == "This user does not exist"){
+    }else if(grant_type == "password"){
+        businessLayer.checkIfUserExists(accountToCreate, function (account, errors) {
+            if(accountToCreate  != true) {
                 businessLayer.addUser(accountToCreate, function (result, errors) {
-                    if(errors.length == 0){
-                        response.status(200).json(['A user was added']);
-                    }else{
-                        response.status(400).json(errors);
+                    if (errors.length == 0) {
+                        response.status(200).json();
+                    } else {
+                        response.status(400).json();
                     }
                 });
-
             }else{
-                response.status(400).json(errors);
+                response.status(400).json()
             }
         })
+    }else{
+        response.status(400).json();
     }
-
 })
 
 app.get('/posts', function (request, response) {
@@ -147,11 +143,6 @@ app.post('/login', function (request, response) {
     const accountToLogin = request.body;
     const expectedStructure = '{username: String, password: String}';
 
-    /*if(!typeCheck(expectedStructure,accountToLogin)) {
-        response.json(response.status(400).json(['Invalid input']));
-        return;
-    }
-    */
     if (grant_type == "password") {
         businessLayer.logIn(accountToLogin, function (userToLogin, errors) {
             if (errors.length == 0) {
@@ -190,11 +181,8 @@ app.post('/login', function (request, response) {
                 })
 
             }else{
-                response.json(errors);
-
-
+                response.status(400).json(errors);
             }
-
         });
     }else{
         response.status(400).json(['Wrong grant_type']);
@@ -261,6 +249,17 @@ app.delete('/users/:id', function (request, response) {
         }
     })
 })
+app.delete('/posts/:id', function (request, response) {
+    var postId = request.params.id;
+    businessLayer.deletePost(postId, function (results, errors) {
+        if(errors){
+            response.status(400).json(errors);
+        }else{
+            response.status(200).json(['']);
+        }
+    })
+
+} )
 
 
 
