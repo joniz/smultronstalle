@@ -17,6 +17,11 @@ var AWS = require('aws-sdk');
 var fs = require('fs');
 S3FS = require('s3fs');
 
+global.secret = "litehemligtbara";
+var app = express();
+app.use(bodyParser.json({}));
+
+
 var credentials = new AWS.Credentials(
     "AKIAJ6QKD3DZ4V7R5JIA",
     "M3RLj0SFZQevLxKnQnicDtLvws6dY8Brv5djBZ54"

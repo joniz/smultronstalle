@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const userRepository = require('./Data-access-Layer/users-repository');
 const postRepository = require('./Data-access-Layer/post-repository');
 const typeCheck = require('type-check').typeCheck;
-const mysql = require('mysql');
 const jwt = require('jsonwebtoken');
 const isCoordinates = require('is-coordinates');
+var s3fs = require('s3fs');
 var app = express();
 app.use(bodyParser.json({}));
 
@@ -19,7 +19,30 @@ var oauth2Client = new OAuth2(
     "http://localhost:3000/login/google"
 );
 
-// generate a url that asks permissions for Google+ and Google Calendar scopes
+var fs = require('fs'),
+    S3FS = require('s3fs'),
+    s3fsImpl = new S3FS('linusbucket', {
+        accessKeyId: "AKIAJ6QKD3DZ4V7R5JIA",
+        secretAccessKey: "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"
+    });
+
+s3fsImpl.create();
+
+exports.upload = function (picture, req, res) {
+    var file = req.files.file;
+    var stream = fs.createReadStream(file.path);
+    return s3fsImpl.writeFile(file.originalFilename, stream).then(function () {
+        fs.unlink(file.path, function (err) {
+            if (err) {
+                console.error(err);
+            }
+        });
+        res.status(200).end();
+    });
+};
+
+
+
 
 
 var url = oauth2Client.generateAuthUrl({
