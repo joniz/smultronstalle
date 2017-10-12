@@ -3,8 +3,10 @@ const bodyParser = require('body-parser');
 const businessLayer = require('./BusinessLayer.js');
 const typeCheck = require('type-check').typeCheck;
 const jwt = require('jsonwebtoken');
-//const multiparty = require('connect-multiparty');
+const multiparty = require('connect-multiparty');
+const multipartMiddleware = multiparty();
 var multer = require('multer');
+var upload = multer({ dest: 'uploads/' })
 var multerS3 = require('multer-s3');
 var AWS = require('aws-sdk');
 var fs = require('fs');
@@ -13,13 +15,14 @@ S3FS = require('s3fs');
 
 global.secret = "litehemligtbara";
 var app = express();
+//app.use(multiparty)
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({extended : true}));
 
 
 
 
-var credentials = new AWS.Credentials(
+/*var credentials = new AWS.Credentials(
     "AKIAJ6QKD3DZ4V7R5JIA",
     "M3RLj0SFZQevLxKnQnicDtLvws6dY8Brv5djBZ54"
 )
@@ -42,24 +45,25 @@ global.upload = multer({
         }
     })
 })
+*/
 
 
+app.post('/uploadImage', upload.any(), function (request, response) {
 
-app.post('/upload', upload.single('avatar'), function (req, res, next) {
-    token = req.get("Authorization");
-    businessLayer.verifyJWT(token, function (decoded, errors) {
-        if(errors.length == 0){
-            
+    var postId = request.body.postId;
+    var picture = request.files[0]
+    businessLayer.uploadPicture(picture, postId, function (addr, errors) {
+        if(errors){
+            response.status(400).json(errors);
+        }else{
+            response.status(200).json(addr);
         }
     })
-    console.log(req.file.location)
-    res.send('Successfully uploaded')
 
 })
+
+
 app.get('/users', function(request, response){
-
-
-
     businessLayer.getUsers(function(users, errors){
         if(errors.length == 0){
             response.json(users);
@@ -272,6 +276,7 @@ app.get('/login/google', function (request, response) {
     var authCode = request.query.code;
     response.json(authCode);
 })
+app.delete('/users/delete/:id')
 
 
 

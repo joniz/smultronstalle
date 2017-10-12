@@ -5,12 +5,11 @@ const postRepository = require('./Data-access-Layer/post-repository');
 const typeCheck = require('type-check').typeCheck;
 const jwt = require('jsonwebtoken');
 const isCoordinates = require('is-coordinates');
-var s3fs = require('s3fs');
 var app = express();
 app.use(bodyParser.json({}));
-
 var google = require('googleapis');
 var OAuth2 = google.auth.OAuth2;
+const bucketAddr = "https://s3-eu-west-1.amazonaws.com/nodejssmultronstalle/"
 
 
 var oauth2Client = new OAuth2(
@@ -21,29 +20,34 @@ var oauth2Client = new OAuth2(
 
 var fs = require('fs'),
     S3FS = require('s3fs'),
-    s3fsImpl = new S3FS('linusbucket', {
-        accessKeyId: "AKIAJ6QKD3DZ4V7R5JIA",
-        secretAccessKey: "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"
+    s3fsImpl = new S3FS('nodejssmultronstalle', {
+        accessKeyId: "AKIAI5OZ63YM3E7XXTPA",
+        secretAccessKey: "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"
     });
 
-s3fsImpl.create();
+exports.uploadPicture = function (picture, postId, callback) {
 
-exports.upload = function (picture, req, res) {
-    var file = req.files.file;
-    var stream = fs.createReadStream(file.path);
-    return s3fsImpl.writeFile(file.originalFilename, stream).then(function () {
-        fs.unlink(file.path, function (err) {
-            if (err) {
-                console.error(err);
+    var stream = fs.createReadStream(picture.path);
+
+    return s3fsImpl.writeFile(picture.originalname, stream).then(function () {
+        fs.unlink(picture.path, function (errors) {
+            if (errors) {
+                callback (null, errors);
+            }else{
+                exports.addImageToPost(postId, bucketAddr + picture.originalname, function (results, errors) {
+                    if(errors){
+                        callback(null, errors)
+                    }else{
+                        callback(bucketAddr + picture.originalname, []);
+                    }
+                });
+
             }
         });
-        res.status(200).end();
+
     });
+
 };
-
-
-
-
 
 var url = oauth2Client.generateAuthUrl({
     // 'online' (default) or 'offline' (gets refresh_token)
@@ -61,14 +65,9 @@ exports.getAccessToken = function (code, callback) {
     oauth2Client.getToken(code, function (err, tokens) {
         // Now tokens contains an access_token and an optional refresh_token. Save them.
         if (!err) {
-
-
             var token = tokens.id_token;
-
             var decodedToken = jwt.decode(token, {complete: true});
             var subPart = decodedToken.payload.sub;
-
-            //exports.logIn(subPart, callback);
             callback(subPart, []);
         }else{
             callback(null, err);
@@ -127,5 +126,13 @@ exports.getPostsComments = function (postId, callback) {
     postRepository.getPostsComments(postId, callback);
 }
 exports.addPost = function (userId, post, callback) {
+
+
     postRepository.addPost(userId, post, callback);
+}
+exports.addImageToPost = function (postId, imageLink, callback) {
+    postRepository.addImageToPost(postId, imageLink, callback);
+}
+exports.deleteUser = function (userId, callback) {
+    userRepository.deleteUser(userId, callback);
 }

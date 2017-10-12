@@ -21,3 +21,6 @@ exports.getUserComments = function (userId, callback) {
 exports.logIn = function (account, callback) {
     db.logIn(account, callback);
 }
+exports.deleteUser = function (userId, callback) {
+    db.deleteUser(userId, callback);
+}

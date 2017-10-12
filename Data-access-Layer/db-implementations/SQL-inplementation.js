@@ -136,3 +136,24 @@ exports.addPost = function (userId, post, callback) {
     })
 
 }
+exports.addImageToPost = function (postId, imageLink, callback) {
+    var query = "UPDATE posts SET imagelink = ? WHERE id = ?";
+
+    connection.query(query, [imageLink, postId], function (error, results) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(results, []);
+        }
+    })
+}
+exports.deleteUser = function (userId, callback) {
+    var query = "DELETE FROM users WHERE id = ?"
+    connection.query(query, [userId], function (error, results) {
+        if(error){
+            callback(null,  error);
+        }else{
+            callback(results, []);
+        }
+    })
+}
