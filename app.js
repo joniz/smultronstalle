@@ -228,10 +228,7 @@ app.post('/posts', function (request, response) {
     })
 
 });
-app.get('/login/google', function (request, response) {
-    var authCode = request.params.id;
-    response.json(authCode);
-})
+
 app.delete('/users/:id', function (request, response) {
     var userId = request.params.id;
     businessLayer.deleteUser(userId, function (results, errors) {
@@ -255,4 +252,38 @@ app.delete('/posts/:id', function (request, response) {
     })
 
 })
-app.listen(PORT);
+app.get('/comments', function (request, response) {
+
+    businessLayer.getComments(function (results, errors) {
+        if(errors.length == 0){
+            response.status(200).json(results);
+        }else{
+            response.status(400).json();
+        }
+    })
+})
+app.get('/comments/:id', function (request, response) {
+    var commentId = request.params.id;
+
+    businessLayer.getComment(commentId, function (results, errors) {
+        if(errors.length == 0){
+            response.status(200).json(results);
+        }else{
+            response.status(400).json();
+        }
+    })
+})
+app.delete('/comments/:id', function (request, response) {
+    var commentId = request.params.id;
+
+    businessLayer.deleteComment(commentId, function (results, errors) {
+        if(errors.length == 0){
+            response.status(200).json();
+        }else{
+            response.status(400).json();
+        }
+
+    })
+})
+
+app.listen(3000);

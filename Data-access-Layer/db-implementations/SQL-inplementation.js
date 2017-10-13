@@ -10,10 +10,10 @@ var connection = mysql.createConnection({
 
 connection.connect(function(error){
     if(error){
-        console.log("COULD NOT CONNECT")
-        console.log(error)
+        //console.log("COULD NOT CONNECT")
+        //console.log(error)
     }else{
-        console.log("CONNECTED")
+        //console.log("CONNECTED")
     }
 })
 
@@ -181,4 +181,38 @@ exports.checkIfUserExist = function (account, callback) {
             callback(false, []);
         }
     })
+}
+exports.getComments = function (callback) {
+    var query = "SELECT * FROM comments";
+
+    connection.query(query, function (error, results) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(results, []);
+        }
+    })
+}
+exports.getComment = function (commentId, callback) {
+    var query = "SELECT * FROM comments WHERE id = ?";
+
+    connection.query(query, [commentId] ,function (error, results) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(results, []);
+        }
+    })
+}
+exports.deleteComment = function (commentId, callback) {
+    var query = "DELETE FROM comments WHERE id = ?";
+
+    connection.query(query, [commentId], function (error, results) {
+        if(error){
+            callback(null, error);
+        }else{
+            callback(results, []);
+        }
+    })
+
 }

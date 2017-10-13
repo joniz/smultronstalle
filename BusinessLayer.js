@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const userRepository = require('./Data-access-Layer/users-repository');
 const postRepository = require('./Data-access-Layer/post-repository');
+const commentRepository = require('./Data-access-Layer/comment-repository');
 const typeCheck = require('type-check').typeCheck;
 const jwt = require('jsonwebtoken');
 const isCoordinates = require('is-coordinates');
@@ -15,7 +16,7 @@ const bucketAddr = "https://s3-eu-west-1.amazonaws.com/nodejssmultronstalle/"
 var oauth2Client = new OAuth2(
     "149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com",
     "zBNMzM0x1Pny3rloN53ufnxv",
-    "https://s3-eu-west-1.amazonaws.com/nodejssmultronstalle/"
+    "http://smultronstalle-env.zppmwye9ms.eu-west-1.elasticbeanstalk.com/"
 );
 
 var fs = require('fs'),
@@ -60,7 +61,7 @@ var url = oauth2Client.generateAuthUrl({
     // Optional property that passes state parameters to redirect URI
     // state: { foo: 'bar' }
 });
-console.log(url);
+
 exports.getAccessToken = function (code, callback) {
 
     oauth2Client.getToken(code, function (err, tokens) {
@@ -142,4 +143,13 @@ exports.deletePost = function (postId, callback) {
 }
 exports.checkIfUserExists = function (account, callback) {
     userRepository.checkIfUserExists(account, callback)
+}
+exports.getComments = function (callback) {
+    commentRepository.getComments(callback);
+}
+exports.getComment = function (commentId, callback) {
+    commentRepository.getComment(commentId, callback);
+}
+exports.deleteComment = function (commentId, callback) {
+    commentRepository.deleteComment(commentId, callback);
 }
