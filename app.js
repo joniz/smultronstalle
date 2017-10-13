@@ -47,10 +47,11 @@ app.get('/users', function(request, response){
 app.get('/users/:id', function (request, response) {
     var userId = request.params.id;
     businessLayer.getUser(userId, function (user,errors ) {
-      if(errors){
-          response.status(400).json(errors);
+      if(errors.length == 0){
+          response.status(200).json(user);
+
       }else{
-          response.json(200).json(user);
+          response.status(400).json(errors);
       }
 
     })
@@ -62,7 +63,7 @@ app.get('/users/:id/comments', function (request, response) {
 
     businessLayer.getUserComments(userId, function (comments, errors) {
         if(errors.length == 0){
-            response.json(comments);
+            response.status(200).json(comments);
         }else{
             response.json(400).json()
         }
@@ -85,17 +86,17 @@ app.post('/users', function(request, response) {
                     } else if (account == false) {
                         businessLayer.addUser(accountToCreate, function (result, errors) {
                             if(errors.length == 0){
-                                response.status(200).json(['A user was added']);
+                                response.status(200).json();
                             }else{
-                                response.status(400).json(errors);
+                                response.status(400).json();
                             }
                         });
                     } else {
-                       response.status(400).json(errors);
+                       response.status(400).json();
                     }
                 })
             }else{
-                response.status(400).json(errors.message);
+                response.status(400).json();
             }
         })
     }else if(grant_type == "password"){
@@ -143,14 +144,14 @@ app.post('/login', function (request, response) {
                 var payload = {userId: id};
                 jwt.sign(payload, secret, function (errors, token) {
                     if (errors) {
-                        response.status(401).json(errors)
+                        response.status(401).json()
                     }
                     else {
                         response.status(200).json("Bearer " + token);
                     }
                 })
             }else{
-                response.status(400).json(errors);
+                response.status(400).json();
             }
 
         })
@@ -165,7 +166,7 @@ app.post('/login', function (request, response) {
                         var payload = {userId : id}
                         jwt.sign(payload, secret, function (errors, token) {
                             if(errors){
-                                response.status(401).json(errors);
+                                response.status(401).json();
                             }else{
                                 response.status(200).json("Bearer " + token);
                             }
@@ -174,7 +175,7 @@ app.post('/login', function (request, response) {
                 })
 
             }else{
-                response.status(400).json(errors);
+                response.status(400).json();
             }
         });
     }else{

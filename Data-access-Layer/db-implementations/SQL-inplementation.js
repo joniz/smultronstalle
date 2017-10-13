@@ -42,7 +42,7 @@ exports.getUsers = function (query, callback){
 
     connection.query(query, function(error, results){
         if(error){
-            callback(null, ['något gick fel']);
+            callback(null, ['Something went wrong']);
         }else{
             callback(results, []);
         }
