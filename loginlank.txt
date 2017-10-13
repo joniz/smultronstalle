@@ -1,0 +1,6 @@
+
+https://accounts.google.com/o/oauth2/v2/auth?
+client_id=149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com&
+redirect_uri=http://smultronstalle-env.zppmwye9ms.eu-west-1.elasticbeanstalk.com/&
+response_type=code&
+scope=https://www.googleapis.com/auth/plus.me
