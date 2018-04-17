@@ -14,15 +14,14 @@ const bucketAddr = "https://s3-eu-west-1.amazonaws.com/nodejssmultronstalle/"
 
 
 var oauth2Client = new OAuth2(
-    "149305994626-cc7n85pmi8kst07g9u8scbn9ls2v3mfm.apps.googleusercontent.com",
-    "zBNMzM0x1Pny3rloN53ufnxv",
-    "http://smultronstalle-env.zppmwye9ms.eu-west-1.elasticbeanstalk.com/"
+    "",
+    ""
 );
 
 var fs = require('fs'),
     S3FS = require('s3fs'),
     s3fsImpl = new S3FS('nodejssmultronstalle', {
-        accessKeyId: "AKIAI5OZ63YM3E7XXTPA",
+        accessKeyId: "",
         secretAccessKey: ""
     });
 
