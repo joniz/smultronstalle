@@ -23,7 +23,7 @@ var fs = require('fs'),
     S3FS = require('s3fs'),
     s3fsImpl = new S3FS('nodejssmultronstalle', {
         accessKeyId: "AKIAI5OZ63YM3E7XXTPA",
-        secretAccessKey: "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"
+        secretAccessKey: ""
     });
 
 exports.uploadPicture = function (picture, postId, callback) {
